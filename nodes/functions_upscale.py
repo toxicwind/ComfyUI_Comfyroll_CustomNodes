@@ -10,7 +10,7 @@
 
 import torch
 #import os
-from comfy_extras.chainner_models import model_loading
+from spandrel import ModelLoader, ImageModelDescriptor
 from comfy import model_management
 import numpy as np
 import comfy.utils
@@ -30,7 +30,7 @@ def load_model(model_name):
     sd = comfy.utils.load_torch_file(model_path, safe_load=True)
     if "module.layers.0.residual_group.blocks.0.norm1.weight" in sd:
         sd = comfy.utils.state_dict_prefix_replace(sd, {"module.":""})
-    out = model_loading.load_state_dict(sd).eval()
+    out = ModelLoader().load_from_state_dict(sd).eval()
     return out
     
 def upscale_with_model(upscale_model, image):
