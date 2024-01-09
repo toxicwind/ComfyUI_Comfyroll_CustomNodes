@@ -3,22 +3,16 @@
 # for ComfyUI                                                 https://github.com/comfyanonymous/ComfyUI                                               
 #---------------------------------------------------------------------------------------------------------------------#
 
-import torch
-import numpy as np
-import os
-import sys
 import csv
-import comfy.sd
-import json
-import folder_paths
-import typing as tg
-import datetime
-import io
-from server import PromptServer, BinaryEventTypes
-from PIL import Image
-from PIL.PngImagePlugin import PngInfo
-from pathlib import Path
 from ..categories import icons
+
+class AnyType(str):
+    """A special type that can be connected to any other types. Credit to pythongosssss"""
+
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+any_type = AnyType("*")
 
 #---------------------------------------------------------------------------------------------------------------------#
 # Text Util Nodes
@@ -206,7 +200,8 @@ class CR_TextConcatenate:
                 "text1": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
                 "text2": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
                 "separator": ("STRING", {"multiline": False, "default": ""}),
-        }}
+                }
+        }
 
     RETURN_TYPES = ("STRING", "STRING", )
     RETURN_NAMES = ("STRING", "show_help", )
@@ -218,6 +213,74 @@ class CR_TextConcatenate:
         show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-save-text-to-file" 
         
         return (text1 + separator + text2, )
+
+#---------------------------------------------------------------------------------------------------------------------#
+class CR_TextReplace:
+
+    @ classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "text": ("STRING", {"multiline": False, "default": "", "forceInput": True}),            
+                },
+            "optional": {
+                "find1": ("STRING", {"multiline": False, "default": ""}),
+                "replace1": ("STRING", {"multiline": False, "default": ""}),
+                "find2": ("STRING", {"multiline": False, "default": ""}),
+                "replace2": ("STRING", {"multiline": False, "default": ""}),
+                "find3": ("STRING", {"multiline": False, "default": ""}),
+                "replace3": ("STRING", {"multiline": False, "default": ""}),    
+            },
+        }
+
+    RETURN_TYPES = (any_type, "STRING", )
+    RETURN_NAMES = ("STRING", "show_help", )
+    FUNCTION = "replace_text"
+    CATEGORY = icons.get("Comfyroll/Utils/Text")
+
+    def replace_text(self, text, find1="", replace1="", find2="", replace2="", find3="", replace3=""):
+    
+        show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-text-replace" 
+        
+        text = text.replace(find1, replace1)
+        text = text.replace(find2, replace2)
+        text = text.replace(find3, replace3)
+        
+        return (text, show_help)    
+
+#---------------------------------------------------------------------------------------------------------------------#
+class CR_SetValueOnString:
+
+    @ classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "text": ("STRING", {"multiline": False, "default": "", "forceInput": True}),            
+                },
+            "optional": {
+                "test_string": ("STRING", {"multiline": False, "default": ""}),
+                "value_if_true": ("STRING", {"multiline": False, "default": ""}),
+                "value_if_false": ("STRING", {"multiline": False, "default": ""}), 
+            },
+        }
+
+    RETURN_TYPES = (any_type, "STRING", )
+    RETURN_NAMES = ("STRING", "show_help", )
+    FUNCTION = "replace_text"
+    CATEGORY = icons.get("Comfyroll/Utils/Other")
+
+    def replace_text(self, text, test_string, value_if_true, value_if_false):
+    
+        show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-set-value-on-string" 
+        
+        if test_string in text:
+            # Test condition is true, replace with value_if_true
+            text_out = value_if_true
+        else:
+            # Test condition is false, replace with value_if_false
+            text_out = value_if_false
+        
+        return (text_out, show_help)
    
 #---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
@@ -230,7 +293,9 @@ NODE_CLASS_MAPPINGS = {
     "CR Multiline Text": CR_MultilineText,
     "CR Split String": CR_SplitString,
     "CR Text Concatenate": CR_TextConcatenate,
-    "CR Save Text To File": CR_SaveTextToFile,     
+    "CR Text Replace": CR_TextReplace,
+    "CR Save Text To File": CR_SaveTextToFile,
+    "CR Set Value on String": CR_SetValueOnString,
 }
 '''
 
