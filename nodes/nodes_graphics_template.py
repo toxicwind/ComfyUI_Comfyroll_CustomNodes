@@ -421,6 +421,8 @@ class CR_SimpleImageCompare:
                footer_height, font_name, font_size, mode,
                border_thickness, image1=None, image2=None):
 
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Layout-Nodes#cr-simple-image-compare"
+
         # Get RGB values for the text and background colors
         if mode == "normal":
             font_color = "black"
@@ -433,10 +435,12 @@ class CR_SimpleImageCompare:
 
             img1 = tensor2pil(image1)  
             img2 = tensor2pil(image2)
-        
+            
             # Get image width and height        
-            image_width = img1.width
-            image_height = img1.height 
+            image_width, image_height = img1.width, img1.height
+          
+            if img2.width != img1.width or img2.height  != img1.height:
+                img2 = apply_resize_image(img2, image_width, image_height, 8, "rescale", "false", 1, 256, "lanczos")          
 
             # Set defaults
             margins = 50
@@ -494,8 +498,6 @@ class CR_SimpleImageCompare:
         if border_thickness > 0:
             result_img = ImageOps.expand(result_img, border_thickness, bg_color)
           
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Layout-Nodes#cr-simple_image_compare"
-
         return (pil2tensor(result_img), show_help, )  
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -519,7 +521,7 @@ class CR_ThumbnailPreview:
     
     def thumbnail(self, image, rescale_factor, max_columns):
 
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Other-Nodes#cr-thumbnail-preview"
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Template-Nodes#cr-thumbnail-preview"
         
         result_images = []
         outline_thickness = 1
@@ -549,7 +551,60 @@ class CR_ThumbnailPreview:
             )
             results.append({"source": "websocket", "content-type": "image/png", "type": "output"})
             
-        return {"ui": {"images": results}}
+        return {"ui": {"images": results}, "result": (show_help,) }
+
+#---------------------------------------------------------------------------------------------------------------------
+class CR_SeamlessChecker:
+
+    @classmethod
+    def INPUT_TYPES(s):
+     
+        return {"required":
+                    {"image": ("IMAGE",),
+                     "rescale_factor": ("FLOAT", {"default": 0.25, "min": 0.10, "max": 1.00, "step": 0.01}),
+                     "grid_options": (["2x2", "3x3", "4x4", "5x5", "6x6"],), 
+                     }
+                }           
+
+    RETURN_TYPES = ("STRING", )
+    RETURN_NAMES = ("show_help", )
+    OUTPUT_NODE = True    
+    FUNCTION = "thumbnail"
+    CATEGORY = icons.get("Comfyroll/Graphics/Template")
+    
+    def thumbnail(self, image, rescale_factor, grid_options):
+
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Other-Nodes#cr-seamless-checker"
+        
+        outline_thickness = 0
+      
+        pil_img = tensor2pil(image)
+        original_width, original_height = pil_img.size        
+        rescaled_img = apply_resize_image(tensor2pil(image), original_width, original_height, 8, "rescale", "false", rescale_factor, 256, "lanczos")
+        outlined_img = ImageOps.expand(rescaled_img, outline_thickness, fill="black")
+        
+        max_columns = int(grid_options[0])
+        repeat_images = [outlined_img] * max_columns ** 2
+ 
+        combined_image = make_grid_panel(repeat_images, max_columns)
+        images_out = pil2tensor(combined_image)
+ 
+        # based on ETN_SendImageWebSocket
+        results = []
+        
+        for tensor in images_out:
+            array = 255.0 * tensor.cpu().numpy()
+            image = Image.fromarray(np.clip(array, 0, 255).astype(np.uint8))
+
+            server = PromptServer.instance
+            server.send_sync(
+                BinaryEventTypes.UNENCODED_PREVIEW_IMAGE,
+                ["PNG", image, None],
+                server.client_id,
+            )
+            results.append({"source": "websocket", "content-type": "image/png", "type": "output"})
+            
+        return {"ui": {"images": results}, "result": (show_help,) }
 
 #---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
@@ -562,6 +617,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Comic Panel Templates": CR_ComicPanelTemplates,
     "CR Simple Image Compare": CR_SimpleImageCompare,
     "CR Thumbnail Preview": CR_ThumbnailPreview,
+    "CR Seamless Checker": CR_SeamlessChecker,
 }
 '''
 

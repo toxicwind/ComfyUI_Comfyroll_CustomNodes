@@ -51,12 +51,12 @@ class CR_ImageOutput:
     RETURN_NAMES = ("trigger", )
     FUNCTION = "save_images"
     OUTPUT_NODE = True
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
     def save_images(self, images, file_format, prefix_presets, filename_prefix="CR",
         trigger=False, output_type="Preview", prompt=None, extra_pnginfo=None):
               
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-image-output"
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-image-output"
     
         def map_filename(filename):
             prefix_len = len(os.path.basename(filename_prefix))
@@ -152,7 +152,7 @@ class CR_ImageOutput:
                 })
                 counter += 1
 
-            return { "ui": { "images": results }, "result": (trigger,) }
+            return { "ui": { "images": results }, "result": (trigger, show_help,) }
  
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_Seed:
@@ -165,11 +165,11 @@ class CR_Seed:
     RETURN_NAMES = ("seed", "show_help", )
     FUNCTION = "seedint"
     OUTPUT_NODE = True
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
     @staticmethod
     def seedint(seed):
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-seed"
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-seed"
         return (seed, show_help,)
 
 #---------------------------------------------------------------------------------------------------------------------#
@@ -184,7 +184,7 @@ class CR_LatentBatchSize:
 
     RETURN_TYPES = ("LATENT", )
     FUNCTION = "batchsize"
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
     def batchsize(self, latent: tg.Sequence[tg.Mapping[tg.Text, torch.Tensor]], batch_size: int):
         samples = latent['samples']
@@ -194,7 +194,7 @@ class CR_LatentBatchSize:
             torch.clone(samples) for _ in range(batch_size - 1)
         ]
 
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-latent-batch-size"
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-latent-batch-size"
 
         return ({
             'samples': torch.cat(sample_list),
@@ -205,17 +205,51 @@ class CR_PromptText:
 
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {"prompt": ("STRING", {"default": "prompt", "multiline": True})}}
+        return {"required": {
+        "prompt": ("STRING", {"default": "prompt", "multiline": True})
+            }
+        }
 
     RETURN_TYPES = ("STRING", "STRING", )
     RETURN_NAMES = ("prompt", "show_help", )
     FUNCTION = "get_value"
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
     def get_value(self, prompt):
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-prompt-text"
+    
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-prompt-text"
+        
         return (prompt, show_help, )
 
+#---------------------------------------------------------------------------------------------------------------------#
+class CR_CombinePrompt:
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                },
+                "optional": {
+                    "part1": ("STRING", {"default": "", "multiline": True}),
+                    "part2": ("STRING", {"default": "", "multiline": True}),
+                    "part3": ("STRING", {"default": "", "multiline": True}),
+                    "part4": ("STRING", {"default": "", "multiline": True}),               
+                    "separator": ("STRING", {"default": ",", "multiline": False}),
+                }
+        }
+
+    RETURN_TYPES = ("STRING", "STRING", )
+    RETURN_NAMES = ("prompt", "show_help", )
+    FUNCTION = "get_value"
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
+
+    def get_value(self, part1="", part2="", part3="", part4="", separator=""):
+    
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-prompt-parts"
+        
+        prompt = part1 + separator + part2 + separator + part3 + separator + part4
+        
+        return (prompt, show_help, )
+        
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_ConditioningMixer:
 
@@ -235,7 +269,7 @@ class CR_ConditioningMixer:
     RETURN_TYPES = ("CONDITIONING", "STRING", )
     RETURN_NAMES = ("CONDITIONING", "show_help", )
     FUNCTION = "conditioning"
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
     
     def conditioning(self, mix_method, conditioning_1, conditioning_2, average_strength):
 
@@ -243,7 +277,7 @@ class CR_ConditioningMixer:
         conditioning_to = conditioning_2
         conditioning_to_strength = average_strength
 
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-conditioning-mixer"
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-conditioning-mixer"
     
         if mix_method == "Combine":
             return (conditioning_1 + conditioning_2, show_help, )
@@ -313,9 +347,11 @@ class CR_SelectModel:
     RETURN_TYPES = ("MODEL", "CLIP", "VAE", "STRING", "STRING", )
     RETURN_NAMES = ("MODEL", "CLIP", "VAE", "ckpt_name", "show_help", )
     FUNCTION = "select_model"
-    CATEGORY = icons.get("Comfyroll/Essential")
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
     def select_model(self, ckpt_name1, ckpt_name2, ckpt_name3, ckpt_name4, ckpt_name5, select_model):
+            
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-select-model"
     
         # Initialise the list
         model_list = list()
@@ -339,37 +375,42 @@ class CR_SelectModel:
         model, clip, vae, clipvision = comfy.sd.load_checkpoint_guess_config(ckpt_path, output_vae=True, output_clip=True,
                                                      embedding_directory=folder_paths.get_folder_paths("embeddings"))
             
-        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Essential-Nodes#cr-select-model"
-            
         return (model, clip, vae, model_name, show_help, )
 
 #---------------------------------------------------------------------------------------------------------------------#
-'''
-class CR_KSampler:
+# based on Jags111 CircularVAEDecode
+class CR_VAEDecode:
+
     @classmethod
     def INPUT_TYPES(s):
-        return {"required":
-                    {"model": ("MODEL",),
-                    "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
-                    "steps": ("INT", {"default": 20, "min": 1, "max": 10000, "forceInput": True}),
-                    "cfg": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 100.0, "step":0.1, "round": 0.01, "forceInput": True}),
-                    "sampler_name": (comfy.samplers.KSampler.SAMPLERS, ),
-                    "scheduler": (comfy.samplers.KSampler.SCHEDULERS, ),
-                    "positive": ("CONDITIONING", ),
-                    "negative": ("CONDITIONING", ),
-                    "latent_image": ("LATENT", ),
-                    "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                     }
-                }
+    
+        return {"required": {
+                    "samples": ("LATENT", ),
+                    "vae": ("VAE", ),
+                    "tiled": ("BOOLEAN", {"default": False}),
+                    "circular": ("BOOLEAN", {"default": False}),                     
+                    }
+        }
+    RETURN_TYPES = ("IMAGE", "STRING", )
+    RETURN_NAMES = ("IMAGE", "show_help", )
+    FUNCTION = "vae_decode"
+    CATEGORY = icons.get("Comfyroll/Essential/Core")
 
-    RETURN_TYPES = ("LATENT",)
-    FUNCTION = "sample"
+    def vae_decode(self, samples, vae, circular=False, tiled=False):
+            
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Core-Nodes#cr-vae-decode"    
 
-    CATEGORY = "sampling"
-
-    def sample(self, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=1.0):
-        return common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=denoise)
-'''     
+        if circular == True:
+            for layer in [layer for layer in vae.first_stage_model.modules() if isinstance(layer, torch.nn.Conv2d)]:
+                layer.padding_mode = "circular"       
+        
+        if tiled == True:
+            c = vae.decode_tiled(samples["samples"], tile_x=512, tile_y=512, )
+        else:
+            c = vae.decode(samples["samples"])
+        
+        return (c, show_help, )
+    
 #---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
 #---------------------------------------------------------------------------------------------------------------------#
@@ -381,9 +422,10 @@ NODE_CLASS_MAPPINGS = {
     "CR Latent Batch Size": CR_LatentBatchSize,
     "CR Seed": CR_Seed,
     "CR Prompt Text": CR_PromptText,
+    "CR Combine Prompt": CR_CombinePrompt,
     "CR Conditioning Mixer": CR_ConditioningMixer,
     "CR Select Model": CR_SelectModel, 
-    #"CR KSampler": CR_KSampler,
+    "CR VAE Decode": CR_VAEDecode,
 }
 '''
 

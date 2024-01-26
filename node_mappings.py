@@ -1,5 +1,5 @@
 try:
-    from .nodes.nodes_essential import *
+    from .nodes.nodes_core import *
     from .nodes.nodes_aspect_ratio import *
     from .nodes.nodes_list import *
     from .nodes.nodes_lora import *
@@ -11,7 +11,7 @@ try:
     from .nodes.nodes_xygrid import *
     from .nodes.nodes_legacy import *
 except ImportError:
-    print("\033[34mComfyroll Studio: \033[92mFailed to load Core nodes\033[0m")
+    print("\033[34mComfyroll Studio: \033[92mFailed to load Essential nodes\033[0m")
 
 try:
     from .nodes.nodes_graphics_matplot import *
@@ -24,14 +24,14 @@ except ImportError:
     print("\033[34mComfyroll Studio: \033[92mFailed to load Graphics nodes\033[0m")
 
 try:
-    from .animation_nodes.nodes_interpolation import *
-    from .animation_nodes.nodes_io import *
-    from .animation_nodes.nodes_prompt import *
-    from .animation_nodes.nodes_schedulers import *
-    from .animation_nodes.nodes_schedules import *
-    from .animation_nodes.nodes_lists import *
-    from .animation_nodes.nodes_utils import *
-    from .animation_nodes.nodes_cyclers import *
+    from .nodes.nodes_animation_interpolation import *
+    from .nodes.nodes_animation_io import *
+    from .nodes.nodes_animation_prompt import *
+    from .nodes.nodes_animation_schedulers import *
+    from .nodes.nodes_animation_schedules import *
+    from .nodes.nodes_animation_lists import *
+    from .nodes.nodes_animation_utils import *
+    from .nodes.nodes_animation_cyclers import *
 except ImportError:
     print("\033[34mComfyroll Studio: \033[92mFailed to load Animation nodes\033[0m")
     
@@ -45,39 +45,44 @@ try:
 except ImportError:
     print("\033[34mComfyroll Studio: \033[92mFailed to load Utility nodes\033[0m")
 
-LIVE_NODE_CLASS_MAPPINGS = { 
+NODE_CLASS_MAPPINGS = { 
     ### Core Nodes
     "CR Image Output": CR_ImageOutput,
     "CR Latent Batch Size": CR_LatentBatchSize,   
     "CR Conditioning Mixer": CR_ConditioningMixer,
     "CR Select Model": CR_SelectModel,
     "CR Seed": CR_Seed, 
-    "CR Prompt Text": CR_PromptText,   
+    "CR Prompt Text": CR_PromptText,
+    "CR Combine Prompt": CR_CombinePrompt,    
+    "CR VAE Decode": CR_VAEDecode,    
     ### List Nodes
     "CR Text List": CR_TextList,
     "CR Prompt List": CR_PromptList, 
-    "CR Simple List": CR_SimpleList,    
-    "CR Load Image List": CR_LoadImageList,
-    "CR Load Image List Plus": CR_LoadImageListPlus,
-    "CR Load GIF As List": CR_LoadGIFAsList,        
+    "CR Simple List": CR_SimpleList,          
     "CR Float Range List": CR_FloatRangeList,
     "CR Integer Range List": CR_IntegerRangeList,
     "CR Load Text List": CR_LoadTextList,
-    "CR Font File List": CR_FontFileList,
     "CR Binary To Bit List": CR_BinaryToBitList,
     "CR Text Cycler": CR_TextCycler,
-    "CR Value Cycler": CR_ValueCycler,    
-    ## List Utils
+    "CR Value Cycler": CR_ValueCycler, 
+    ### List IO
+    "CR Load Image List": CR_LoadImageList,
+    "CR Load Image List Plus": CR_LoadImageListPlus,
+    "CR Load GIF As List": CR_LoadGIFAsList,  
+    "CR Font File List": CR_FontFileList,      
+    ### List Utils
     "CR Batch Images From List": CR_MakeBatchFromImageList,    
     "CR Intertwine Lists" : CR_IntertwineLists,
-    "CR Loop List": CR_LoopList, 
+    "CR Repeater": CR_Repeater,     
     "CR XY Product": CR_XYProduct,  
-    "CR Text List To String": CR_TextListToString,      
+    "CR Text List To String": CR_TextListToString,   
     ### Aspect Ratio Nodes
     "CR SD1.5 Aspect Ratio": CR_AspectRatioSD15,
     "CR SDXL Aspect Ratio": CR_SDXLAspectRatio,
     "CR Aspect Ratio": CR_AspectRatio,
-    "CR Aspect Ratio Banners": CR_AspectRatioBanners,      
+    "CR Aspect Ratio Banners": CR_AspectRatioBanners, 
+    "CR Aspect Ratio Social Media": CR_AspectRatioSocialMedia,  
+    "CR_Aspect Ratio For Print": CR_AspectRatioForPrint,
     ### Legacy Nodes
     "CR Image Size": CR_ImageSize,
     "CR Aspect Ratio SDXL": CR_AspectRatio_SDXL,
@@ -97,6 +102,10 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR Apply Model Merge": CR_ApplyModelMerge,
     "CR Model Merge Stack": CR_ModelMergeStack,
     ### Pipe Nodes
+    "CR Data Bus In":CR_DataBusIn,
+    "CR Data Bus Out":CR_DataBusOut,
+    "CR 8 Channel In":CR_8ChannelIn,
+    "CR 8 Channel Out":CR_8ChannelOut,    
     "CR Module Pipe Loader": CR_ModulePipeLoader,
     "CR Module Input": CR_ModuleInput,
     "CR Module Output": CR_ModuleOutput,
@@ -142,6 +151,7 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR Composite Text": CR_CompositeText, 
     #"CR Arabic Text RTL": CR_ArabicTextRTL,
     "CR Simple Text Watermark": CR_SimpleTextWatermark,
+    "CR Select Font": CR_SelectFont,    
     ### Graphics Filter
     "CR Halftone Filter": CR_HalftoneFilter,
     "CR Color Tint": CR_ColorTint,
@@ -155,13 +165,16 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR Simple Text Panel": CR_SimpleTextPanel,    
     "CR Color Panel": CR_ColorPanel,
     "CR Overlay Transparent Image": CR_OverlayTransparentImage,
+    "CR Half Drop Panel": CR_HalfDropPanel, 
+    "CR Diamond Panel": CR_DiamondPanel,
     #"CR Simple Titles": CR_SimpleTitles,    
     ### Graphics Template
     "CR Simple Meme Template": CR_SimpleMemeTemplate,
     "CR Simple Banner": CR_SimpleBanner,    
     "CR Comic Panel Templates": CR_ComicPanelTemplates,
     "CR Simple Image Compare": CR_SimpleImageCompare,
-    "CR Thumbnail Preview": CR_ThumbnailPreview, 
+    "CR Thumbnail Preview": CR_ThumbnailPreview,
+    "CR Seamless Checker": CR_SeamlessChecker,    
     ### Utils Logic
     "CR Image Input Switch": CR_ImageInputSwitch,
     "CR Image Input Switch (4 way)": CR_ImageInputSwitch4way,
@@ -189,7 +202,8 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR String To Combo": CR_StringToCombo,    
     "CR Float To String": CR_FloatToString,
     "CR Float To Integer": CR_FloatToInteger,
-    "CR Integer To String": CR_IntegerToString,    
+    "CR Integer To String": CR_IntegerToString,
+    "CR String To Boolean": CR_StringToBoolean,     
     ### Utils Random
     "CR Random Hex Color": CR_RandomHexColor, 
     "CR Random RGB": CR_RandomRGB,
@@ -204,19 +218,22 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR Text Concatenate": CR_TextConcatenate, 
     "CR Text Replace": CR_TextReplace,
     "CR Text Length": CR_TextLength,
-    "CR Text Operation": CR_TextOperation,    
+    "CR Text Operation": CR_TextOperation,  
+    "CR Text Blacklist": CR_TextBlacklist,      
     "CR Save Text To File": CR_SaveTextToFile,
-    ### Utils Other    
-    "CR Integer Multiple": CR_IntegerMultipleOf,    
-    "CR Value": CR_Value,
-    "CR Integer Multiple": CR_IntegerMultipleOf,
-    "CR Clamp Value": CR_ClampValue,
+    ### Utils Conditional
     "CR Set Value On Boolean": CR_SetValueOnBoolean,
     "CR Set Value On Binary": CR_SetValueOnBinary, 
-    "CR Set Value on String": CR_SetValueOnString,       
+    "CR Set Value on String": CR_SetValueOnString,
+    "CR Set Switch From String": CR_SetSwitchFromString,        
+    ### Utils Other     
+    "CR Value": CR_Value,
+    "CR Integer Multiple": CR_IntegerMultipleOf,
+    "CR Clamp Value": CR_ClampValue,     
     "CR Math Operation": CR_MathOperation,
-    "CR Get Parameter From Prompt": CR_GetParameterFromPrompt,     
-    #------------------------------------------------------
+    "CR Get Parameter From Prompt": CR_GetParameterFromPrompt,
+    "CR Select Resize Method": CR_SelectResizeMethod,
+    "CR Select ISO Size": CR_SelectISOSize,
     ### Animation Nodes
     # Schedules  
     "CR Simple Schedule": CR_SimpleSchedule,
@@ -272,7 +289,7 @@ LIVE_NODE_CLASS_MAPPINGS = {
     "CR Image List Simple": CR_ImageListSimple,    
 }
 
-LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
+NODE_DISPLAY_NAME_MAPPINGS = {
     ### Core Nodes
     "CR Image Output": "💾 CR Image Output",
     "CR Integer Multiple": "⚙️ CR Integer Multiple",
@@ -281,7 +298,9 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Value": "⚙️ CR Value",
     "CR Conditioning Mixer": "⚙️ CR Conditioning Mixer",
     "CR Select Model": "🔮 CR Select Model",
-    "CR Prompt Text": "⚙️ CR Prompt Text",    
+    "CR Prompt Text": "⚙️ CR Prompt Text", 
+    "CR Combine Prompt": "⚙️ CR Combine Prompt",
+    "CR VAE Decode": "⚙️ CR VAE Decode",     
     ### List Nodes
     "CR Text List": "📜 CR Text List",
     "CR Prompt List": "📜 CR Prompt List",
@@ -301,7 +320,7 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     ### List Utils
     "CR Batch Images From List": "🛠️ CR Batch Images From List",
     "CR Intertwine Lists" : "🛠️ CR Intertwine Lists",
-    "CR Loop List": "🛠️ CR Loop List",    
+    "CR Repeater": "🛠️ CR Repeater",    
     "CR XY Product": "🛠️ CR XY Product",      
     "CR Text List To String": "🛠️ CR Text List To String",   
     ### Aspect Ratio Nodes
@@ -309,6 +328,8 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR SDXL Aspect Ratio": "🔳 CR SDXL Aspect Ratio",    
     "CR Aspect Ratio": "🔳 CR Aspect Ratio",
     "CR Aspect Ratio Banners": "🔳 CR Aspect Ratio Banners",
+    "CR Aspect Ratio Social Media": "🔳 CR Aspect Ratio Social Media",
+    "CR_Aspect Ratio For Print": "🔳 CR_Aspect Ratio For Print",
     ### Legacy Nodes
     "CR Image Size": "CR Image Size (Legacy)",
     "CR Aspect Ratio SDXL": "CR Aspect Ratio SDXL (Legacy)",
@@ -328,6 +349,10 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Apply Model Merge": "⛏️ CR Apply Model Merge",
     "CR Model Merge Stack": "⛏️ CR Model Merge Stack",
     ### Pipe Nodes
+    "CR Data Bus In": "🚌 CR Data Bus In",
+    "CR Data Bus Out": "🚌 CR Data Bus Out",
+    "CR 8 Channel In": "🚌 CR 8 Channel In",
+    "CR 8 Channel Out": "🚌 CR 8 Channel Out",     
     "CR Module Pipe Loader": "✈️ CR Module Pipe Loader",
     "CR Module Input": "✈️ CR Module Input",
     "CR Module Output": "✈️ CR Module Output",
@@ -349,7 +374,6 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR XY Index": "📉 CR XY Index",
     "CR XY From Folder": "📉 CR XY From Folder",
     "CR XY Save Grid Image": "📉 CR XY Save Grid Image",
-    #"CR XYZ Index": "📉 CR XYZ Index",
     ### Graphics Pattern
     "CR Halftone Grid" : "🟫 CR Halftone Grid",    
     "CR Color Bars" : "🟫 CR Color Bars",
@@ -371,8 +395,8 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Draw Text": "🔤️ CR Draw Text",
     "CR Mask Text": "🔤️ CR Mask Text",
     "CR Composite Text": "🔤️ CR Composite Text",
-    #"CR Arabic Text RTL": "🔤️ CR Arabic Text RTL",
     "CR Simple Text Watermark": "🔤️ CR Simple Text Watermark",
+    "CR Select Font":  "🔤️ CR Select Font",
     ### Graphics Filter
     "CR Halftone Filter": "🎨 Halftone Filter",
     "CR Color Tint": "🎨 CR Color Tint", 
@@ -382,17 +406,19 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Image Grid Panel": "🌁 CR Image Grid Panel",
     "CR Simple Text Panel": "🌁 CR Simple Text Panel",
     "CR Color Panel": "🌁 CR Color Panel",
+    "CR Half Drop Panel": "🌁 CR Half Drop Panel",
+    "CR Diamond Panel": "🌁 CR Diamond Panel",    
     "CR Page Layout": "🌁 CR Page Layout",
     "CR Image Border": "🌁 CR Image Border",
     "CR Feathered Border": "🌁 CR Feathered Border",    
-    "CR Overlay Transparent Image": "🌁 CR Overlay Transparent Image",
-    #"CR Simple Titles": "🌁 CR Simple Titles",    
+    "CR Overlay Transparent Image": "🌁 CR Overlay Transparent Image",    
     ### Graphics Template
     "CR Simple Meme Template": "📱 CR Simple Meme Template",
     "CR Simple Banner": "📱 CR Simple Banner",     
     "CR Comic Panel Templates": "📱 CR Comic Panel Templates",
     "CR Simple Image Compare": "📱 CR Simple Image Compare",
-    "CR Thumbnail Preview": "📱 CR Thumbnail Preview", 
+    "CR Thumbnail Preview": "📱 CR Thumbnail Preview",
+    "CR Seamless Checker": "📱 CR Seamless Checker",
     ### Utils Logic
     "CR Image Input Switch": "🔀 CR Image Input Switch",
     "CR Image Input Switch (4 way)": "🔀 CR Image Input Switch (4 way)",
@@ -415,12 +441,13 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Index Multiply": "🔢 CR Index Multiply",
     "CR Index Reset": "🔢 CR Index Reset",
     "CR Trigger": "🔢 CR Trigger",
-    ### Utils Conversions
+    ### Utils Conversion
     "CR String To Number": "🔧 CR String To Number",
     "CR String To Combo": "🔧 CR String To Combo",    
     "CR Float To String": "🔧 CR Float To String",
     "CR Float To Integer": "🔧 CR Float To Integer",
-    "CR Integer To String": "🔧 CR Integer To String",    
+    "CR Integer To String": "🔧 CR Integer To String", 
+    "CR String To Boolean": "🔧 CR String To Boolean",     
     ### Utils Random
     "CR Random Hex Color": "🎲 CR Random Hex Color", 
     "CR Random RGB": "🎲 CR Random RGB",
@@ -434,19 +461,23 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Split String": "🔤 CR Split String",
     "CR Text Concatenate": "🔤 CR Text Concatenate",
     "CR Text Replace": "🔤 CR Text Replace",
+    "CR Text Blacklist": "🔤 Text Blacklist",    
     "CR Text Length": "🔤 CR Text Length",
     "CR Text Operation": "🔤 CR Text Operation", 
-    "CR Save Text To File": "🔤 CR Save Text To File",       
+    "CR Save Text To File": "🔤 CR Save Text To File",
+    ### Utils Conditional
+    "CR Set Value On Boolean": "⚙️ CR Set Value On Boolean",
+    "CR Set Value On Binary": "⚙️ CR Set Value On Binary",
+    "CR Set Value on String": "⚙️ CR Set Value on String",
+    "CR Set Switch From String": "⚙️ CR Set Switch From String",     
     ### Utils Other    
     "CR Integer Multiple": "⚙️ CR Integer Multiple",
     "CR Value": "⚙️ CR Value",
     "CR Clamp Value": "⚙️ CR Clamp Value",
-    "CR Set Value On Boolean": "⚙️ CR Set Value On Boolean",
-    "CR Set Value On Binary": "⚙️ CR Set Value On Binary",
-    "CR Set Value on String": "⚙️ CR Set Value on String",
     "CR Math Operation": "⚙️ CR Math Operation",
-    "CR Get Parameter From Prompt": "⚙️ CR Get Parameter From Prompt",   
-    #------------------------------------------------------
+    "CR Get Parameter From Prompt": "⚙️ CR Get Parameter From Prompt",
+    "CR Select Resize Method": "⚙️ CR Select Resize Method",
+    "CR Select ISO Size": "⚙️ CR Select ISO Size",    
     ### Animation Nodes
     # Schedules  
     "CR Simple Schedule": "📋 CR Simple Schedule",
@@ -497,5 +528,5 @@ LIVE_NODE_DISPLAY_NAME_MAPPINGS = {
     "CR Text List Simple": "CR Text List Simple (Legacy)",
     "CR Image List": "CR Image List (Legacy)",
     "CR Image List Simple": "CR Image List Simple (Legacy)", 
-    "CR Input Text List": "CR Input Text List (Legacy)",      
+    "CR Input Text List": "CR Input Text List (Legacy)",   
 }

@@ -15,46 +15,16 @@
 @author: Suzie1
 @title: Comfyroll Studio
 @nickname: Comfyroll Studio
-@description: 164 custom nodes for artists, designers and animators.
+@description: 175 custom nodes for artists, designers and animators.
 """
 
-from .live_node_mappings import LIVE_NODE_CLASS_MAPPINGS, LIVE_NODE_DISPLAY_NAME_MAPPINGS
-
-INCLUDE_DEV_NODES = False
-
-try:
-    if INCLUDE_DEV_NODES:
-        from .dev_node_mappings import DEV_NODE_CLASS_MAPPINGS, DEV_NODE_DISPLAY_NAME_MAPPINGS
-        NODE_CLASS_MAPPINGS = {**DEV_NODE_CLASS_MAPPINGS, **LIVE_NODE_CLASS_MAPPINGS}
-        NODE_DISPLAY_NAME_MAPPINGS = {**DEV_NODE_DISPLAY_NAME_MAPPINGS, **LIVE_NODE_DISPLAY_NAME_MAPPINGS}
-        print("\033[34mComfyroll Studio: \033[92mDev Nodes Loaded\033[0m")
-    else:
-        NODE_CLASS_MAPPINGS = LIVE_NODE_CLASS_MAPPINGS
-        NODE_DISPLAY_NAME_MAPPINGS = LIVE_NODE_DISPLAY_NAME_MAPPINGS
-except ImportError:
-    NODE_CLASS_MAPPINGS = LIVE_NODE_CLASS_MAPPINGS
-    NODE_DISPLAY_NAME_MAPPINGS = LIVE_NODE_DISPLAY_NAME_MAPPINGS
+from .node_mappings import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
 
 print("------------------------------------------")    
-print("\033[34mComfyroll Studio v1.65 : \033[92m 164 Nodes Loaded\033[0m")
+print("\033[34mComfyroll Studio v1.76 : \033[92m 175 Nodes Loaded\033[0m")
 print("------------------------------------------") 
 print("** For changes, please see patch notes at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/blob/main/Patch_Notes.md") 
 print("** For help, please see the wiki at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki") 
 print("------------------------------------------") 
 
-import shutil
-import folder_paths
-import os
-
-comfy_path = os.path.dirname(folder_paths.__file__)
-comfyroll_nodes_path = os.path.join(os.path.dirname(__file__))
-
-js_dest_path = os.path.join(comfy_path, "web", "extensions", "Comfyroll")
-os.makedirs(js_dest_path, exist_ok=True)
-
-files_to_copy = ["test.js"]
-
-for file in files_to_copy:
-    js_src_path = os.path.join(comfyroll_nodes_path, "js", file)
-    shutil.copy(js_src_path, js_dest_path)
 

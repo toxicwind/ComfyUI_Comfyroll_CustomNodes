@@ -2,7 +2,7 @@
 
 Co-authored by Suzie1 and RockOfFire
 
-Current version: 1.64
+Current version: 1.76
 
 # Wiki
 
@@ -31,15 +31,19 @@ __📦 Essential Nodes__
 * CR Image Output (changed 18/12/2023)
 * CR Latent Batch Size
 * CR Prompt Text
+* CR Combine Prompt
 * CR Seed
 * CR Conditioning Mixer
-* CR Select Model
+* CR Select Model (new 24/1/2024)
+* CR VAE Decode (new 24/1/2024)
 
 __🔳 Aspect Ratio__
 * CR Aspect Ratio
 * CR SDXL Aspect Ratio
 * CR SD1.5 Aspect Ratio
 * CR Aspect Ratio Banners (new 18/12/2023)
+* CR Aspect Ratio Social Media (new 15/1/2024)
+* CR Aspect Ratio For Print (new 18/1/2024)
 
 __📜 List Nodes__
 * CR Text List (new 19/12/2023)
@@ -61,7 +65,7 @@ __📜 List IO__
 __📜 List Utils__
 * CR Batch Images From List (new 29/12/2023)    
 * CR Intertwine_Lists (new 29/12/2023)
-* CR Loop List (new 4/1/2024)   
+* CR Repeater (new 15/1/2024)   
 * CR XY Product (new 2/1/2024)
 * CR Text List To String (updated 30/12/2023)
 
@@ -81,6 +85,12 @@ __🕹️ ControlNet__
 * CR Apply ControlNet
 * CR Multi-ControlNet Stack
 * CR Apply Multi-ControlNet Stack
+
+__🚌 Bus__
+* CR Data Bus In (new 12/1/2024)
+* CR Data Bus Out (new 12/1/2024)
+* CR 8 Channel In (new 12/1/2024)
+* CR 8 Channel Out (new 12/1/2024)
 
 __✈️ Module__
 * CR Module Pipe Loader
@@ -127,8 +137,8 @@ __🌈 Graphics - Pattern__
 * CR Radial Gradiant
 * CR Starburst Lines
 * CR Starburst Colors
-* CR Simple Binary Pattern (new 8/12/2023)
-* CR Binary Pattern (new 8/12/2023)
+* CR Simple Binary Pattern
+* CR Binary Pattern
 
 __🟡 Graphics - Pattern__
 * CR Draw Shape (new 24/12/2023)
@@ -140,6 +150,7 @@ __🔤 Graphics - Text__
 * CR Draw Text
 * CR Mask Text
 * CR Composite Text
+* CR Select Font
 
 __👽 Graphics - Template__
 * CR Simple Meme Template
@@ -148,6 +159,7 @@ __👽 Graphics - Template__
 * CR Simple Banner (new 18/12/2023)
 * CR Simple Image Compare (new 18/12/2023)
 * CR Thumbnail Preview (new 26/12/2023)
+* CR Seamless Checker (new 18/1/2023)
 
 __🌁 Graphics - Layout__
 * CR Image Panel
@@ -157,7 +169,10 @@ __🌁 Graphics - Layout__
 * CR Feathered Border (new 21/12/2023)
 * CR Color Panel
 * CR Simple Text Panel
+* CR Half Drop Panel (new 23/1/2024)
+* CR Diamond Panel (new 24/1/2024)
 * CR Overlay Transparent Image
+* CR Select ISO Size (new 18/1/2023)
 
 ## 🎥 Animation
 
@@ -214,7 +229,8 @@ __🔧 Utils Conversion__
 * CR String To Combo    
 * CR Float To String
 * CR Float To Integer
-* CR Integer To String    
+* CR Integer To String  
+* CR String To Boolean (new 17/1/2024)  
 
 __🔀 Utils Logic__
 * CR Image Input Switch
@@ -239,7 +255,7 @@ __🎲 Utils Random__
 * CR Random RGB
 * CR Random Multiline Values (updated 28/12/2023)
 * CR Random Multiline Colors (new 28/12/2023)
-* CR Random RGB Gradient (new 8/12/2023)
+* CR Random RGB Gradient
 * CR Random Panel Code (new 26/12/2023)
 
 __🔤 Utils Text__
@@ -248,19 +264,24 @@ __🔤 Utils Text__
 * CR Split String
 * CR Text Concatenate (new 2/1/2024)
 * CR Text Replace (new 8/1/2024)
+* CR Text Blacklist (new 13/1/2024)
 * CR Text Length (new 10/1/2024)    
 * CR Text Operation (new 10/1/2024)
 * CR Save Text To File (new 27/12/2023)
+
+__⚙️ Conditional__
+* CR Set Value On Boolean (new 29/12/2023)
+* CR Set Value On Binary (new 3/1/2024)
+* CR Set Value On String (new 9/1/2024)
+* CR Set Switch From String (new 17/1/2024)
 
 __⚙️ Utils Other__
 * CR Value
 * CR Integer Multiple
 * CR Clamp Value (new 29/12/2023)
-* CR Set Value On Boolean (new 29/12/2023)
-* CR Set Value On Binary (new 3/1/2024)
-* CR Set Value on String (new 9/1/2024)
 * CR Math Operation (new 31/12/2023)  
 * CR Get Parameter From Prompt (new 5/1/2024)
+* CR Select Resize Method (new 16/1/2024)
 
 ## Legacy
 __💀 Legacy Nodes__

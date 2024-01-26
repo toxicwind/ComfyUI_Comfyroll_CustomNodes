@@ -9,6 +9,7 @@ import os
 from PIL import Image, ImageDraw, ImageOps, ImageFont, ImageFilter
 from ..categories import icons
 from ..config import color_mapping, COLORS
+from ..config import iso_sizes
 from .functions_graphics import * 
 
 #---------------------------------------------------------------------------------------------------------------------#
@@ -314,15 +315,17 @@ class CR_ImageGridPanel:
 
         border_color = get_color_values(border_color, border_color_hex, color_mapping)
 
-        # Convert PIL images to NumPy arrays
+        # Convert PIL images
         images = [tensor2pil(image) for image in images]
             
         # Apply borders and outlines to each image
         images = apply_outline_and_border(images, outline_thickness, outline_color, border_thickness, border_color)
 
         combined_image = make_grid_panel(images, max_columns)
+        
+        image_out = pil2tensor(combined_image)
 
-        return (pil2tensor(combined_image), show_help, )   
+        return (image_out, show_help, )   
 
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_ImageBorder:
@@ -489,11 +492,11 @@ class CR_OverlayTransparentImage:
         return {"required": {
                 "back_image": ("IMAGE",),
                 "overlay_image": ("IMAGE",),
-                "transparency": ("FLOAT", {"default": 0, "min": 0, "max": 1, "step": 0.1}),
+                "transparency": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.1}),
                 "offset_x": ("INT", {"default": 0, "min": -4096, "max": 4096}),
                 "offset_y": ("INT", {"default": 0, "min": -4096, "max": 4096}),
                 "rotation_angle": ("FLOAT", {"default": 0.0, "min": -360.0, "max": 360.0, "step": 0.1}),
-                "overlay_scale_factor": ("FLOAT", {"default": 1.0, "min": -0.1, "max": 100.0, "step": 0.1}),
+                "overlay_scale_factor": ("FLOAT", {"default": 1.000, "min": 0.000, "max": 100.000, "step": 0.001}),
                 }        
         }
 
@@ -519,7 +522,7 @@ class CR_OverlayTransparentImage:
         # Scale overlay image
         overlay_width, overlay_height = overlay_image.size
         new_size = (int(overlay_width * overlay_scale_factor), int(overlay_height * overlay_scale_factor))
-        overlay_image = overlay_image.resize(new_size, Image.ANTIALIAS)
+        overlay_image = overlay_image.resize(new_size, Image.Resampling.LANCZOS)
 
         # Calculate centered position relative to the center of the background image
         center_x = back_image.width // 2
@@ -608,6 +611,172 @@ class CR_FeatheredBorder:
         return (images, show_help, )
 
 #---------------------------------------------------------------------------------------------------------------------#
+class CR_HalfDropPanel:
+
+    @classmethod
+    def INPUT_TYPES(s):
+    
+        patterns = ["none", "half drop", "quarter drop", "custom drop %"]
+
+        return {"required": {
+                    "image": ("IMAGE",),
+                    "pattern": (patterns,),
+                },
+                "optional": {
+                    "drop_percentage": ("FLOAT", {"default": 0.50, "min": 0.00, "max": 1.00, "step": 0.01}),              
+                }
+    }
+
+    RETURN_TYPES = ("IMAGE", "STRING", )
+    RETURN_NAMES = ("image", "show_help", )
+    FUNCTION = "make_panel"
+    CATEGORY = icons.get("Comfyroll/Graphics/Layout")
+    
+    def make_panel(self, image, pattern, drop_percentage=0.5):
+
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Layout-Nodes#cr-half-drop-panel"
+
+        if pattern == "none":
+            return (image, show_help, )
+
+        # Convert to PIL image
+        pil_img = tensor2pil(image) 
+        pil_img = pil_img.convert('RGBA')
+        
+        x, y = pil_img.size
+        aspect_ratio = x / y
+        d = int(drop_percentage * 100)
+
+        panel_image = Image.new('RGBA', (x*2, y*2))
+
+        if pattern == "half drop":
+            panel_image.paste(pil_img, (0, 0))
+            panel_image.paste(pil_img, (0, y))
+            panel_image.paste(pil_img, (x, -y//2))
+            panel_image.paste(pil_img, (x, y//2))
+            panel_image.paste(pil_img, (x, 3*y//2))   
+        elif pattern == "quarter drop":    
+            panel_image.paste(pil_img, (0, 0))
+            panel_image.paste(pil_img, (0, y))
+            panel_image.paste(pil_img, (x, -3*y//4))
+            panel_image.paste(pil_img, (x, y//4))
+            panel_image.paste(pil_img, (x, 5*y//4))        
+        elif pattern == "custom drop %":     
+            panel_image.paste(pil_img, (0, 0))
+            panel_image.paste(pil_img, (0, y))
+            panel_image.paste(pil_img, (x, (d-100)*y//100))
+            panel_image.paste(pil_img, (x, d*y//100))
+            panel_image.paste(pil_img, (x, y + d*y//100))   
+             
+        image_out = pil2tensor(panel_image.convert('RGB'))
+
+        return (image_out, show_help, )   
+
+#---------------------------------------------------------------------------------------------------------------------#
+class CR_DiamondPanel:
+
+    @classmethod
+    def INPUT_TYPES(s):
+    
+        patterns = ["none", "diamond"]
+
+        return {"required": {
+                    "image": ("IMAGE",),
+                    "pattern": (patterns,),
+                }
+        }
+
+    RETURN_TYPES = ("IMAGE", "STRING", )
+    RETURN_NAMES = ("image", "show_help", )
+    FUNCTION = "make_panel"
+    CATEGORY = icons.get("Comfyroll/Graphics/Layout")
+    
+    def make_panel(self, image, pattern, drop_percentage=0.5):
+
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Layout-Nodes#cr-diamond-panel"
+
+        if pattern == "none":
+            return (image, show_help, )
+
+        # Convert to PIL image
+        pil_img = tensor2pil(image) 
+        pil_img = pil_img.convert('RGBA')
+        
+        x, y = pil_img.size
+        aspect_ratio = x / y
+        d = int(drop_percentage * 100)
+
+        panel_image = Image.new('RGBA', (x*2, y*2))
+  
+        if pattern == "diamond":
+
+            diamond_size = min(x, y)
+            diamond_width = min(x, y * aspect_ratio)
+            diamond_height = min(y, x / aspect_ratio)
+
+            diamond_mask = Image.new('L', (x, y), 0)
+            draw = ImageDraw.Draw(diamond_mask)
+
+            # Make sure the polygon points form a diamond shape
+            draw.polygon([(x // 2, 0), (x, y // 2),
+                          (x // 2, y), (0, y // 2)], fill=255)
+
+            # Create a copy of the original image
+            diamond_image = pil_img.copy()
+
+            # Set alpha channel using the diamond-shaped mask
+            diamond_image.putalpha(diamond_mask)
+
+            # Paste the diamond-shaped image onto the panel_image at position (0, 0)
+            panel_image.paste(diamond_image, (-x//2, (d-100)*y//100), diamond_image)
+            panel_image.paste(diamond_image, (-x//2, d*y//100), diamond_image)
+            panel_image.paste(diamond_image, (-x//2, y + d*y//100), diamond_image)            
+            panel_image.paste(diamond_image, (0, 0), diamond_image)
+            panel_image.paste(diamond_image, (0, y), diamond_image)
+            panel_image.paste(diamond_image, (x//2, (d-100)*y//100), diamond_image)
+            panel_image.paste(diamond_image, (x//2, d*y//100), diamond_image)
+            panel_image.paste(diamond_image, (x//2, y + d*y//100), diamond_image)
+            panel_image.paste(diamond_image, (x, 0), diamond_image)
+            panel_image.paste(diamond_image, (x, y), diamond_image)
+            panel_image.paste(diamond_image, (3*x//2, (d-100)*y//100), diamond_image)
+            panel_image.paste(diamond_image, (3*x//2, d*y//100), diamond_image)
+            panel_image.paste(diamond_image, (3*x//2, y + d*y//100), diamond_image)             
+             
+        image_out = pil2tensor(panel_image.convert('RGB'))
+
+        return (image_out, show_help, ) 
+        
+#---------------------------------------------------------------------------------------------------------------------#
+class CR_SelectISOSize:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+     
+        sizes = list(iso_sizes.keys()) 
+        
+        return {
+            "required": {
+                "iso_size": (sizes, ),
+            }
+        }
+    
+    RETURN_TYPES =("INT", "INT","STRING", )
+    RETURN_NAMES =("width", "height","show_help", )
+    FUNCTION = "get_size"    
+    CATEGORY = icons.get("Comfyroll/Utils/Other")
+
+    def get_size(self, iso_size):
+    
+        if iso_size in iso_sizes:
+            width, height = iso_sizes[iso_size]
+        else:
+            print("Size not found.")
+    
+        show_help = "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/Other-Nodes#cr-select-iso-size"    
+      
+        return (width, height, show_help, )
+        
+#---------------------------------------------------------------------------------------------------------------------#
 # MAPPINGS
 #---------------------------------------------------------------------------------------------------------------------#
 # For reference only, actual mappings are in __init__.py
@@ -615,13 +784,15 @@ class CR_FeatheredBorder:
 NODE_CLASS_MAPPINGS = {
     "CR Page Layout": CR_PageLayout,
     "CR Image Grid Panel": CR_ImageGridPanel,
-    "CR Image XY Panel": CR_ImageXYPanel,
+    "CR Half Drop Panel": CR_HalfDropPanel,
+    "CR Diamond Panel": CR_DiamondPanel,
     "CR Image Border": CR_ImageBorder,
     "CR Feathered Border": CR_FeatheredBorder,
     "CR Color Panel": CR_ColorPanel,
     "CR Simple Text Panel": CR_SimpleTextPanel,
     "CR Overlay Transparent Image": CR_OverlayTransparentImage,
-    "CR Simple Titles": CR_SimpleTitles,
+    #"CR Simple Titles": CR_SimpleTitles,
+    "CR Select ISO Size": CR_SelectISOSize,    
 }
 '''
 

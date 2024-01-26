@@ -3,7 +3,9 @@
 # for ComfyUI                                                 https://github.com/comfyanonymous/ComfyUI                                               
 #---------------------------------------------------------------------------------------------------------------------#
 
+import os
 import csv
+import io
 from ..categories import icons
 
 class AnyType(str):
@@ -22,17 +24,20 @@ class CR_SplitString:
     @classmethod
     def INPUT_TYPES(s):  
     
-        return {"required": {"text": ("STRING", {"multiline": False, "default": "text"}),
-                             "delimiter": ("STRING", {"multiline": False, "default": ","}), 
-                }
+        return {"required": {
+                    "text": ("STRING", {"multiline": False, "default": "text"}),
+                },
+                "optional": {
+                    "delimiter": ("STRING", {"multiline": False, "default": ","}),
+                }            
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", )
+    RETURN_TYPES = (any_type, any_type, any_type, any_type, "STRING", )
     RETURN_NAMES = ("string_1", "string_2", "string_3", "string_4", "show_help", )    
     FUNCTION = "split"
     CATEGORY = icons.get("Comfyroll/Utils/Text")
 
-    def split(self, text, delimiter):
+    def split(self, text, delimiter=""):
 
         # Split the text string
         parts = text.split(delimiter)
@@ -54,7 +59,7 @@ class CR_Text:
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING", )
+    RETURN_TYPES = (any_type, "STRING", )
     RETURN_NAMES = ("text", "show_help", )
     FUNCTION = "text_multiline"
     CATEGORY = icons.get("Comfyroll/Utils/Text")
@@ -81,7 +86,7 @@ class CR_MultilineText:
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING", )
+    RETURN_TYPES = (any_type, "STRING", )
     RETURN_NAMES = ("multiline_text", "show_help", )
     FUNCTION = "text_multiline"
     CATEGORY = icons.get("Comfyroll/Utils/Text")
@@ -197,10 +202,12 @@ class CR_TextConcatenate:
     @ classmethod
     def INPUT_TYPES(cls):
         return {"required": {
-                "text1": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
-                "text2": ("STRING", {"multiline": False, "default": "", "forceInput": True}),
-                "separator": ("STRING", {"multiline": False, "default": ""}),
-                }
+                },
+                "optional": {
+                "text1": ("STRING", {"multiline": False, "default": "", "forceInput": True}),                
+                "text2": ("STRING", {"multiline": False, "default": "", "forceInput": True}), 
+                "separator": ("STRING", {"multiline": False, "default": ""}),                
+            },
         }
 
     RETURN_TYPES = (any_type, "STRING", )
@@ -208,7 +215,7 @@ class CR_TextConcatenate:
     FUNCTION = "concat_text"
     CATEGORY = icons.get("Comfyroll/Utils/Text")
 
-    def concat_text(self, text1, text2, separator, ):
+    def concat_text(self, text1="", text2="", separator=""):
     
         show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-save-text-to-file" 
         
@@ -221,7 +228,7 @@ class CR_TextReplace:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "text": ("STRING", {"multiline": False, "default": "", "forceInput": True}),            
+                "text": ("STRING", {"multiline": True, "default": "", "forceInput": True}),            
                 },
             "optional": {
                 "find1": ("STRING", {"multiline": False, "default": ""}),
@@ -249,39 +256,37 @@ class CR_TextReplace:
         return (text, show_help)    
 
 #---------------------------------------------------------------------------------------------------------------------#
-class CR_SetValueOnString:
+class CR_TextBlacklist:
 
     @ classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "text": ("STRING", {"multiline": False, "default": "", "forceInput": True}),            
+                "text": ("STRING", {"multiline": True, "default": "", "forceInput": True}),
+                "blacklist_words": ("STRING", {"multiline": True, "default": ""}),
                 },
             "optional": {
-                "test_string": ("STRING", {"multiline": False, "default": ""}),
-                "value_if_true": ("STRING", {"multiline": False, "default": ""}),
-                "value_if_false": ("STRING", {"multiline": False, "default": ""}), 
+                "replacement_text": ("STRING", {"multiline": False, "default": ""}),    
             },
         }
 
     RETURN_TYPES = (any_type, "STRING", )
     RETURN_NAMES = ("STRING", "show_help", )
     FUNCTION = "replace_text"
-    CATEGORY = icons.get("Comfyroll/Utils/Other")
+    CATEGORY = icons.get("Comfyroll/Utils/Text")
 
-    def replace_text(self, text, test_string, value_if_true, value_if_false):
+    def replace_text(self, text, blacklist_words, replacement_text=""):
     
-        show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-set-value-on-string" 
+        show_help =  "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki/List-Nodes#cr-text-blacklist" 
+         
+        text_out = text 
         
-        if test_string in text:
-            # Test condition is true, replace with value_if_true
-            text_out = value_if_true
-        else:
-            # Test condition is false, replace with value_if_false
-            text_out = value_if_false
-        
-        return (text_out, show_help)
-  
+        for line in blacklist_words.split('\n'):  # Splitting based on line return
+            if line.strip():
+                text_out = text_out.replace(line.strip(), replacement_text)       
+    
+        return (text_out, show_help)   
+
 #---------------------------------------------------------------------------------------------------------------------#
 class CR_TextOperation:
 
@@ -362,9 +367,9 @@ NODE_CLASS_MAPPINGS = {
     "CR Split String": CR_SplitString,
     "CR Text Concatenate": CR_TextConcatenate,
     "CR Text Replace": CR_TextReplace,
+    "CR Text Blacklist": CR_TextBlacklist,   
     "CR Text Length": CR_TextLength,    
-    "CR Text Operation": CR_TextOperation,
-    "CR Set Value on String": CR_SetValueOnString,    
+    "CR Text Operation": CR_TextOperation, 
     "CR Save Text To File": CR_SaveTextToFile,    
 }
 '''

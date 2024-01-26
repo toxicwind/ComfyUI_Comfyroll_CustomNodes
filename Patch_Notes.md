@@ -1,5 +1,68 @@
 # 🧩 Comfyroll Studio - Patch Notes
 
+## v1.76 Jan 24, 2024
+- added CR VAE Decode
+- added CR Combine Prompt
+- added CR Diamond Pattern
+
+## v1.75.1 Jan 24, 2024
+- fix for issue 112 CR Text Blacklist, added handling for blank lines and fixed issue with finding multiple keywords
+- PR108, fix for missing import in nodes_utils_text.py
+
+## v1.75 Jan 23, 2024
+- added CR Half Drop Panel
+
+## v1.74.1 Jan 19, 2024
+- fixed CR Thumbnail Preview show_help
+
+## v1.74 Jan 18, 2024
+- updated CR Simple Image Compare to automatically resize the second image if the size is different
+- added CR Aspect Ratio For Print
+- added CR Seamless Checker
+- added CR Select ISO Size
+
+## v1.73.1 Jan 17, 2024
+- fix for issue 104
+
+## v1.73 Jan 17, 2024
+- added CR String to Boolean
+- updated CR Aspect Ratio Social Media, added more options
+- updated CR Color Tint, fixed issue with colors
+
+## v1.72 Jan 16, 2024
+- added CR Select Resize Method
+- added CR Set Switch From String
+
+## v1.71.1 Jan 16, 2024
+- fix for issue 101 CR Select Font
+- fix for issue 103 CR Overlay Transparent Image
+
+## v1.71 Jan 15, 2024
+- changed string outputs to any_type on text util nodes
+
+## v1.70 Jan 15, 2024
+- added CR Aspect Ratio Social Media
+
+## v1.69 Jan 14, 2024
+- added CR Repeater
+- deleted CR Loop List, replaced by CR Repeater
+- removed dev nodes
+
+## v1.68 Jan 13, 2024
+- added CR Text Blacklist
+- removed loading for dev node mappings
+
+## v1.67 Jan 12, 2024
+- added CR Data Bus In
+- added CR Data Bus Out
+- added CR 8 Channel In
+- added CR 8 Channel
+- updated CR Random Multiline Values, output is now any_type
+
+## v1.66 Jan 11, 2024
+- added CR Select Font
+- updated CR Get Parameter From Prompt, added handling for quotes
+
 ## v1.65 Jan 10, 2024
 - added CR Text Length   
 - added CR Text Operation
@@ -20,7 +83,7 @@
 
 ## v1.60 Jan 4, 2024
 - added CR Bit Scheduler
-- added CR Loops
+- added CR Loop List
 - added CR Text Cycler
 - added CR Value Cycler
 - updated conversion nodes to make the index an input (force input)
