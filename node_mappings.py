@@ -137,13 +137,7 @@ NODE_CLASS_MAPPINGS = {
     "CR Color Gradient": CR_ColorGradient,
     "CR Radial Gradient": CR_RadialGradient,    
     "CR Starburst Lines": CR_StarburstLines,
-    "CR Starburst Colors": CR_StarburstColors,
-    "CR Simple Binary Pattern": CR_BinaryPatternSimple,     
-    "CR Binary Pattern": CR_BinaryPattern,
-    ### Graphics Shape    
-    "CR Draw Shape": CR_DrawShape,
-    "CR Draw Pie": CR_DrawPie,    
-    "CR Random Shape Pattern": CR_RandomShapePattern,    
+    "CR Starburst Colors": CR_StarburstColors, 
     ### Graphics Text
     "CR Overlay Text": CR_OverlayText,
     "CR Draw Text": CR_DrawText,
@@ -168,13 +162,6 @@ NODE_CLASS_MAPPINGS = {
     "CR Half Drop Panel": CR_HalfDropPanel, 
     "CR Diamond Panel": CR_DiamondPanel,
     #"CR Simple Titles": CR_SimpleTitles,    
-    ### Graphics Template
-    "CR Simple Meme Template": CR_SimpleMemeTemplate,
-    "CR Simple Banner": CR_SimpleBanner,    
-    "CR Comic Panel Templates": CR_ComicPanelTemplates,
-    "CR Simple Image Compare": CR_SimpleImageCompare,
-    "CR Thumbnail Preview": CR_ThumbnailPreview,
-    "CR Seamless Checker": CR_SeamlessChecker,    
     ### Utils Logic
     "CR Image Input Switch": CR_ImageInputSwitch,
     "CR Image Input Switch (4 way)": CR_ImageInputSwitch4way,

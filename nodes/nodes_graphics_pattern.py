@@ -471,9 +471,6 @@ class CR_RandomShapePattern:
 # For reference only, actual mappings are in __init__.py
 '''
 NODE_CLASS_MAPPINGS = {
-    "CR Simple Binary Pattern Simple": CR Binary Pattern Simple,    
-    "CR Binary Pattern": CR_BinaryPattern,
-    "CR Draw Shape": CR_DrawShape,
     "CR Random Shape Pattern: CR_RandomShapePattern,
     "CR Draw Pie": CR_DrawPie,
 }
